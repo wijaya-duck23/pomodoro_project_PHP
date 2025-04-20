@@ -1,0 +1,12 @@
+# Enable URL rewriting
+RewriteEngine On
+
+# Base directory
+RewriteBase /
+
+# If requested resource is not a file
+RewriteCond %{REQUEST_FILENAME} !-f
+# If requested resource is not a directory
+RewriteCond %{REQUEST_FILENAME} !-d
+# Route everything to index.php
+RewriteRule ^(.*)$ index.php [QSA,L] 
