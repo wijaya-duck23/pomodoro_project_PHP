@@ -48,13 +48,35 @@ $uri = $_SERVER['REQUEST_URI'];
 $scriptName = $_SERVER['SCRIPT_NAME'];
 $baseDir = dirname($scriptName);
 
-if ($baseDir != '/') {
-    $uri = substr($uri, strlen($baseDir));
+if ($baseDir != '/' && $baseDir != '\\') {
+    // If the URI starts with the base directory, remove it
+    if (strpos($uri, $baseDir) === 0) {
+        $uri = substr($uri, strlen($baseDir));
+    }
+}
+
+// Debug information (in development only)
+if (strpos($uri, '/debug') === 0) {
+    echo "<h1>Debug Information</h1>";
+    echo "<pre>";
+    echo "URI: " . $uri . "\n";
+    echo "Base Dir: " . $baseDir . "\n";
+    echo "Script Name: " . $scriptName . "\n";
+    echo "</pre>";
+    exit;
 }
 
 // Route the request
 try {
-    $router->direct($uri, $_SERVER['REQUEST_METHOD']);
+    // Special case for empty URI - explicitly call the default route
+    if (empty($uri) || $uri == '/' || $uri == '/index.php') {
+        // Load the TimerController manually
+        $controllerClass = "App\\Controllers\\TimerController";
+        $controller = new $controllerClass();
+        $controller->index();
+    } else {
+        $router->direct($uri, $_SERVER['REQUEST_METHOD']);
+    }
 } catch (Exception $e) {
     // Handle 404 or other errors
     http_response_code(404);
