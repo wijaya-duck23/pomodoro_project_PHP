@@ -11,13 +11,32 @@ ini_set('display_errors', 1);
 // Set BASE_PATH constant
 define('BASE_PATH', realpath(__DIR__ . '/..'));
 
-// Timer settings
+// Load config manually
+$configPath = BASE_PATH . '/config/config.php';
+if (file_exists($configPath)) {
+    $config = include $configPath;
+} else {
+    // Fallback config
+    $config = [
+        'pomodoro_duration' => 25 * 60,
+        'short_break_duration' => 5 * 60,
+        'long_break_duration' => 15 * 60
+    ];
+}
+
+// Set timer settings from config
 $timerSettings = [
-    'pomodoro' => 25 * 60,
-    'short_break' => 5 * 60,
-    'long_break' => 15 * 60
+    'pomodoro' => $config['pomodoro_duration'] ?? 25 * 60,
+    'short_break' => $config['short_break_duration'] ?? 5 * 60,
+    'long_break' => $config['long_break_duration'] ?? 15 * 60
 ];
 
 // Include the timer view directly
-require_once BASE_PATH . '/app/views/timer/index.php';
+$viewPath = BASE_PATH . '/app/views/timer/index.php';
+if (file_exists($viewPath)) {
+    require_once $viewPath;
+} else {
+    echo "<h1>Error</h1>";
+    echo "<p>Timer view not found at: $viewPath</p>";
+}
 ?> 

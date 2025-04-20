@@ -3,6 +3,10 @@
  * Main Application Entry Point
  */
 
+// Turn on error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // Set BASE_PATH constant
 define('BASE_PATH', realpath(__DIR__ . '/..'));
 
@@ -68,16 +72,35 @@ if (strpos($uri, '/debug') === 0) {
 
 // Route the request
 try {
-    // Special case for empty URI - explicitly call the default route
+    // Special case for empty URI - explicitly load and use the timer controller
     if (empty($uri) || $uri == '/' || $uri == '/index.php') {
-        // Load the TimerController manually
-        $controllerClass = "App\\Controllers\\TimerController";
-        $controller = new $controllerClass();
+        // Include the controller file directly
+        $controllerPath = BASE_PATH . '/app/controllers/TimerController.php';
+        if (!file_exists($controllerPath)) {
+            throw new Exception("Controller file not found: " . $controllerPath);
+        }
+        
+        // Load the controller file
+        require_once $controllerPath;
+        
+        // Load the Session model which is used by TimerController
+        $sessionModelPath = BASE_PATH . '/app/models/Session.php';
+        if (file_exists($sessionModelPath)) {
+            require_once $sessionModelPath;
+        }
+        
+        // Create controller instance - use fully qualified class name
+        $controller = new \App\Controllers\TimerController();
         $controller->index();
     } else {
         $router->direct($uri, $_SERVER['REQUEST_METHOD']);
     }
 } catch (Exception $e) {
+    // Output error for debugging
+    echo "<h1>Error</h1>";
+    echo "<p>" . $e->getMessage() . "</p>";
+    echo "<pre>" . $e->getTraceAsString() . "</pre>";
+    
     // Handle 404 or other errors
     http_response_code(404);
     require BASE_PATH . '/app/views/errors/404.php';
