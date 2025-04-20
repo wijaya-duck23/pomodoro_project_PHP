@@ -31,7 +31,7 @@ class Database
         
         $this->host = $config['db_host'] ?? 'localhost';
         $this->username = $config['db_user'] ?? 'root';
-        $this->password = $config['db_pass'] ?? 'wijaya28@';
+        $this->password = $config['db_pass'] ?? '';
         $this->database = $config['db_name'] ?? 'pomodoro_app';
     }
 
