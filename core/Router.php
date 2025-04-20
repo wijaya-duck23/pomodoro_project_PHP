@@ -39,6 +39,13 @@ class Router
      */
     public function load($routesFile)
     {
+        if (!file_exists($routesFile)) {
+            die("Routes file not found at: " . $routesFile);
+        }
+        
+        // Make router available to the routes file
+        $router = $this;
+        
         require_once $routesFile;
         return $this;
     }
@@ -82,6 +89,12 @@ class Router
     protected function callAction($controller, $action)
     {
         $controller = "App\\Controllers\\{$controller}";
+        
+        // Check if controller class exists
+        if (!class_exists($controller)) {
+            throw new Exception("Controller {$controller} not found.");
+        }
+        
         $controller = new $controller();
         
         if (!method_exists($controller, $action)) {

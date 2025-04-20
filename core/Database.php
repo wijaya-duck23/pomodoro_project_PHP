@@ -17,12 +17,22 @@ class Database
     public function __construct()
     {
         // Load configuration
-        $config = require_once __DIR__ . '/../config/config.php';
+        $configPath = __DIR__ . '/../config/config.php';
         
-        $this->host = $config['db_host'];
-        $this->username = $config['db_user'];
-        $this->password = $config['db_pass'];
-        $this->database = $config['db_name'];
+        if (!file_exists($configPath)) {
+            die("Config file not found at: " . $configPath);
+        }
+        
+        $config = require_once $configPath;
+        
+        if (!is_array($config)) {
+            die("Config file did not return an array. Check your config.php file.");
+        }
+        
+        $this->host = $config['db_host'] ?? 'localhost';
+        $this->username = $config['db_user'] ?? 'root';
+        $this->password = $config['db_pass'] ?? '';
+        $this->database = $config['db_name'] ?? 'pomodoro_app';
     }
 
     /**
