@@ -16,23 +16,31 @@ class Database
      */
     public function __construct()
     {
-        // Load configuration
-        $configPath = __DIR__ . '/../config/config.php';
-        
-        if (!file_exists($configPath)) {
-            die("Config file not found at: " . $configPath);
+        try {
+            // Set default values
+            $this->host = 'localhost';
+            $this->username = 'root';
+            $this->password = '';
+            $this->database = 'pomodoro_app';
+            
+            // Try to load configuration
+            $configPath = __DIR__ . '/../config/config.php';
+            
+            if (file_exists($configPath)) {
+                $config = @include $configPath;
+                
+                // Check if config is an array and has the required keys
+                if (is_array($config)) {
+                    $this->host = isset($config['db_host']) ? $config['db_host'] : $this->host;
+                    $this->username = isset($config['db_user']) ? $config['db_user'] : $this->username;
+                    $this->password = isset($config['db_pass']) ? $config['db_pass'] : $this->password;
+                    $this->database = isset($config['db_name']) ? $config['db_name'] : $this->database;
+                }
+            }
+        } catch (Exception $e) {
+            error_log("Error loading database configuration: " . $e->getMessage());
+            // Continue with default values
         }
-        
-        $config = require_once $configPath;
-        
-        if (!is_array($config)) {
-            die("Config file did not return an array. Check your config.php file.");
-        }
-        
-        $this->host = $config['db_host'] ?? 'localhost';
-        $this->username = $config['db_user'] ?? 'root';
-        $this->password = $config['db_pass'] ?? '';
-        $this->database = $config['db_name'] ?? 'pomodoro_app';
     }
 
     /**
