@@ -23,10 +23,17 @@ class Database
             die("Config file not found at: " . $configPath);
         }
         
-        $config = require_once $configPath;
+        // Capture any potential parse errors
+        ob_start();
+        $config = require $configPath;
+        $errors = ob_get_clean();
+        
+        if ($errors) {
+            die("Errors in config file: " . $errors);
+        }
         
         if (!is_array($config)) {
-            die("Config file did not return an array. Check your config.php file.");
+            die("Config file did not return an array. Check your config.php file. Returned type: " . gettype($config));
         }
         
         $this->host = $config['db_host'] ?? 'localhost';
