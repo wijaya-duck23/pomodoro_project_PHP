@@ -14,7 +14,7 @@ return [
     
     // Application Settings
     'app_name' => 'Pomodoro Timer',
-    'app_url' => 'http://202.10.44.29',  // Change for production
+    'app_url' => 'http://202.10.44.29/',  // Change for production
     
     // Timer Settings
     'pomodoro_duration' => 25 * 60,     // 25 minutes in seconds
