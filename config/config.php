@@ -10,7 +10,7 @@ return [
     'db_host' => 'localhost',
     'db_name' => 'pomodoro_app',
     'db_user' => 'root',  // Change in production
-    'db_pass' => '',      // Change in production
+    'db_pass' => 'wijaya28@',      // Change in production
     
     // Application Settings
     'app_name' => 'Pomodoro Timer',
